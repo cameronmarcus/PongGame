@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<script type="text/javascript">
+
+  var WIDTH = 1000, HEIGHT = 650;
+
+//Sets dashed line in center of page
+    function draw_line(){
+      context.lineWidth=10;
+      context.setLineDash([20, 15]);
+      context.beginPath();
+      context.moveTo(500,0);
+      context.lineTo(500, HEIGHT);
+      context.strokeStyle = '#fff';
+      context.stroke();
+    }
+
+//PADDLE 1 VARS
+  var pady1 = (HEIGHT/2)-(150/2);
+      pad_width = 15;
+      pad_height = 150;
+//PADDLE 2 VARS
+  var pady2 = (HEIGHT/2)-(pad_height/2);
+//BALL VARS
+  var x = 500;
+      y = 350;
+      side = 20;
+      velx= -2;
+      vely= 2;
+      p1score = 0;
+      p2score = 0;
+      score_to_win = 10;
+
+// BALL
+//Draws game ball
+    function draw_ball (){
+      context.beginPath();
+      context.fillStyle = '#FFF';
+      context.arc(x,y,20,0,Math.PI*2);
+      context.fill();
+    }
+// Creates the bounce of ball off of paddle
+    function paddle_bounce(){/*If the side of the ball has same
+       x and y value of the paddle it changes x velocity*/
+      if(x-side == 10 &&  (y<=pady1+pad_height && y>=pady1)){
+        velx = -velx;
+      }
+      if(x-side<0){//If ball touches side of player one then player two gets score
+        p2score++;
+        console.log(p2score);//console logs player two score
+        x = WIDTH/2;//Puts ball back in center of canvas with same x velocity
+        if (p2score==score_to_win) {/*if player two has the score to win (
+          in this case 10) then it alerts page that player two wins*/
+          alert('Player Two Wins!');
+          location.reload();//reloads page to end game
+        }
+      }
+//Line 56-67 is same as 42-54 but for player paddle one
+      if(x+side == WIDTH-pad_width-5 &&  (y<=pady2+pad_height && y>=pady2)){
+        velx = -velx;
+      }
+      if(x+side>WIDTH){
+        p1score++;
+        console.log(p1score);
+        x = WIDTH/2;
+        if (p1score==score_to_win) {
+          alert('Player One Wins!');
+          location.reload();
+        }
+      }
+
+      if(y<(0+side) || y>(HEIGHT-side)){//if side of ball hits bottom or top y velocity is negated i.e. it bounces off
+        vely = -vely;
+      }
+//Following two lines create x and y velocity of ball by changing x and y values of ball
+      x += velx;
+      y += vely;
+//Next two lines create text with player scores later displayed in lines 184 and 187
+       document.getElementById("player1Score").innerHTML = "Player One Score: " + p1score;
+       document.getElementById("player2Score").innerHTML = "Player Two Score: " + p2score;
+    }
+
+//Sets behavior of ball and paddles as well as setting dashed line, clears canvas of ball path
+    function game_elements(){
+      context.clearRect(0,0,WIDTH,HEIGHT);
+      draw_ball();
+      paddle_bounce();
+      draw_paddle();
+      draw_paddle2();
+      draw_line();
+      }
+
+      //PADDLE 1
+//Draws paddle
+    function draw_paddle(){
+      context.rect(10, pady1, pad_width, pad_height);
+      context.fill();
+      }
+/*If key pressed is W(87) then y coordinate of paddle decreased by 20 i.e. paddle
+goes down and paddle is below top of canvas(remember the farther you go down
+ on the canvas the larger the y-value)*/
+    function set_listeners (){
+      document.addEventListener('keydown', function(event) {
+        var key = event.keyCode;
+        if (key === 87 && pady1>0){
+          pady1 -= 20;
+        }
+/*If key pressed is W(83) then y coordinate of paddle decreased by 20 i.e. paddle
+goes down and paddle is above bottom of canvas(top of paddle is y value of paddle)*/
+        if (key === 83 && pady1<(HEIGHT-pad_height)){
+          pady1 += 20;
+        }
+        draw_paddle();//Draws paddle
+      });
+    }
+
+    //PADDLE 2
+//Lines 118-138 are same as 92-114 but for paddle two
+    function draw_paddle2(){
+      context.rect(WIDTH-pad_width-10, pady2, pad_width, pad_height);
+      context.fill();
+    }
+
+      function set_listeners2 (){
+        document.addEventListener('keydown', function(event) {
+          var key = event.keyCode;
+          if (key === 38 && pady2>0){
+            pady2 -= 20;
+        }
+          if (key === 40 && pady2<(HEIGHT-pad_height)){
+            pady2 += 20;
+          }
+          draw_paddle2();
+        });
+      }
+
+      function paddles(){
+        set_listeners();
+        set_listeners2();
+      }
+
+    var num_game = 0
+      function game(){//Sets paddles and ball and starts game
+        if (num_game===0){/*prevents game from being called more than once
+          when play button is clicked more than once*/
+        var canvas = document.getElementById("myCanvas");
+        context = canvas.getContext('2d');//Creates context for canvas
+        setInterval(game_elements, 6);//changes ball position every 10 ms
+        draw_line();
+        paddles();
+        num_game++;
+        }
+      }
+
+//Google Analytics
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+        ga('create', 'UA-98299230-1', 'auto');
+        ga('send', 'pageview');
+
+
+</script>
+
+<html>
+  <head>
+    <link rel="icon" href="favicon.ico" type="image/gif" sizes="16x16">
+    <meta charset="utf-8">
+    <title>PONG</title>
+  </head>
+  <body bgcolor="black">
+    <table>
+      <!-- Creates table in page-->
+      <tr>
+        <!-- Has first column of first row span 2 columns with black background-->
+          <td colspan="2"  bgcolor="black">
+            <!-- Creates canvas with border-->
+            <canvas id="myCanvas" width=1000 height=650 style ="border:5px solid #fff;"></canvas>
+          </td>
+          <!-- Creates column with play and stop button and controls, spans two rows-->
+          <td rowspan="2" valign="top">
+            <br>
+            <h1 style="color: white"align="center">Pong</h1>
+            <!-- On click play runs game function-->
+            <button style="font-size:25px;width:230px;height:75px;" font-size=300%; onclick="game();" id="myButton" >Play</button>
+            <br>
+            <!-- On click stop sends you to welcome page-->
+            <button style="font-size:25px;width:230px;height:75px;" onclick="location.href='index.html';" id="myButton1" >Stop</button>
+            <br>
+            <br>
+            <!-- Text for controls-->
+              <h2 style="color: white">Player One (Left) Controls:</h2>
+                <p style="color: white; font-size: 20px"> Up = W <br> Down = S </p>
+            <br>
+              <h2 style="color: white">Player Two (Right) Controls:</h2>
+                <p style="color: white; font-size: 20px"> Up = Up Arrow <br> Down = Down Arrow <p/>
+      </tr>
+      <tr>
+        <!-- Creates second row with players scores-->
+          <td style="color: white" align="center">
+              <h1 id="player1Score">
+          </td>
+          <td style="color: white" align="center">
+            <h1 id="player2Score">
+          </td>
+      </tr>
+    </table>
+  </body>
+</html>
