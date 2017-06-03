@@ -1,5 +1,5 @@
-# Pong
-ⓅⓄⓃⒼ
+# ⓅⓄⓃⒼ
+
 
 Welcome to Pong by Cameron Marcus
 
