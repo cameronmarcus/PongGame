@@ -15,5 +15,3 @@ Note: Make sure your browser is in full screen when playing this game.
 Hope you Enjoy!
 
 Link to game www.ponggameonline.com
-
-TEST TEST TEST
